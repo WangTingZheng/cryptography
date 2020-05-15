@@ -39,7 +39,32 @@ function res = check_key(str)
     return;
 end
 
+
 function [res,flag] = Encoding_or_Decoding(msg, key)
+    if mod(get_len(msg),get_len(key)) ~=0
+        disp('无法分组，明文/密文空间的长度不是密钥空间的整数倍');
+        flag = 0;
+        res = 0;
+        return;
+    end
+    time  = get_len(msg)/get_len(key);
+    if time ~= 1
+        disp(strcat(strcat('分成了',num2str(time)),'组'));
+    end
+    time_temp = time;
+    flag_time = 0;
+    res='';
+    while time ~= 0
+        [res_time,flag_time] = Encoding_or_Decoding_time(msg(1+(time_temp-time)*get_len(key):(time_temp-time+1)*get_len(key)),key);
+        if flag_time ~= 0
+            res = strcat(res, res_time);
+        end
+        time = time -1;
+    end
+    flag = flag_time;
+    return;
+end
+function [res,flag] = Encoding_or_Decoding_time(msg, key)
     if get_len(msg) ~= get_len(key)
         disp('密钥长度与明文/密钥空间长度不一致');
         flag = 0;
@@ -69,6 +94,7 @@ end
 
 function [res,flag]  = Encoding(msg, key)
     [res,flag] = Encoding_or_Decoding(msg,key);
+    return;
 end
 
 function [res,flag] = Decoding(cip,key)

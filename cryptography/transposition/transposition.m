@@ -7,4 +7,5 @@ function transposition()
         disp(res);
     end
     return;
+
 end

@@ -7,7 +7,6 @@ function transposition()
         disp(res);
     end
     return;
-
 end
 
 function [res,flag] = transposition_function(str, key, action)

@@ -37,20 +37,25 @@ function [res, flag] = Encoding_or_Decoding(msg, key, action)
     msg_length = length(msg);
     key_length = length(key);
     time = fix(msg_length/key_length);
-    left = mod(msg_length, key_length);    
-    for i =1:time
-        group  = msg((i-1)*key_length+1:i* key_length);
-        if strcmp(action,'E')==1
+    left = mod(msg_length, key_length);
+    if strcmp(action,'E')==1
+        for i =1:time
+            group  = msg((i-1)*key_length+1:i* key_length);
             comp((i-1)*key_length+1:i*key_length) = mod(group - 'a'+(key - 'a'),26);
-        elseif(strcmp(action,'D')==1)
-            comp((i-1)*key_length+1:i*key_length) = mod(group - 'a'-(key - 'a'),26);
-        else
-            flag = 0;
-            res = 0;
-            return;
         end
+        after = mod(msg(time*key_length+1:end)-'a'+key(1:left)-'a',26);
+    elseif(strcmp(action,'D')==1)
+        for i =1:time
+            group  = msg((i-1)*key_length+1:i* key_length);
+            comp((i-1)*key_length+1:i*key_length) = mod(group - 'a'-(key - 'a'),26);
+        end
+        after = mod(msg(time*key_length+1:end)-'a'-(key(1:left)-'a'),26);
+    else
+        flag = 0;
+        res = 0;
+        return;
     end
-    after = mod(msg(time*key_length+1:end)-'a'+key(1:left)-'a',26);
+
     temp = char([comp, after]);
     res = char(temp+'a');
     flag = 1;
